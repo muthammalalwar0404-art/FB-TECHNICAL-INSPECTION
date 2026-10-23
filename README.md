@@ -1,6 +1,5 @@
-Formula Bharat Technical Inspection Tracker
+Technical Inspection Tracker
 
-A lean, single-page web app for Formula Bharat technical inspectors to register teams and run each team through the inspection process, with every check tied to the 2027 Formula Bharat rule book (v1.3).
 
 Problem
 
