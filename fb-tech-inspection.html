@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FB Tech Inspection</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mu:#667085;--bd:#dde1e7;--ac:#1f6feb;--ok:#14803c;--okb:#dcfce7;--no:#b42318;--nob:#fee4e2;--na:#667085;--nab:#eceef2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1216;--card:#181c22;--tx:#e8eaed;--mu:#9aa3af;--bd:#2a3039;--ac:#5b9bff;--ok:#4ade80;--okb:#12301f;--no:#f87171;--nob:#3a1715;--na:#9aa3af;--nab:#252a32}}
+:root[data-theme="dark"]{--bg:#0f1216;--card:#181c22;--tx:#e8eaed;--mu:#9aa3af;--bd:#2a3039;--ac:#5b9bff;--ok:#4ade80;--okb:#12301f;--no:#f87171;--nob:#3a1715;--na:#9aa3af;--nab:#252a32}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font-size:16px;margin:0;flex:1;min-width:140px}
+input,select,button{font:inherit;color:inherit}
+input,select{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;min-width:0}
+button{cursor:pointer;border:1px solid var(--bd);background:var(--card);border-radius:8px;padding:8px 12px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+main{max-width:900px;margin:0 auto;padding:14px}
+.banner{background:var(--nob);color:var(--no);padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1}
+.mu{color:var(--mu);font-size:13px}
+.bar{height:6px;background:var(--nab);border-radius:4px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ok)}
+.chip{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--nab);color:var(--na)}
+.chip.f{background:var(--nob);color:var(--no)}.chip.p{background:var(--okb);color:var(--ok)}
+.team{cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+details{background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:10px;overflow:hidden}
+summary{padding:12px;cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:center}
+.item{padding:10px 12px;border-top:1px solid var(--bd)}
+.item .ref{font-size:12px;color:var(--ac);font-weight:600}
+.btns{display:flex;gap:6px;margin-top:6px}
+.btns button{flex:1;padding:8px 0;font-weight:600}
+.btns .on.p{background:var(--okb);color:var(--ok);border-color:var(--ok)}
+.btns .on.f{background:var(--nob);color:var(--no);border-color:var(--no)}
+.btns .on.n{background:var(--nab);color:var(--na);border-color:var(--na)}
+.note{width:100%;margin-top:6px}.note.req{border-color:var(--no)}
+.meta{font-size:11px;color:var(--mu);margin-top:4px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+</style></head><body>
+<div id="bn" class="banner" hidden>Shared database unavailable: changes stay on this device only. Open the published link while signed in to claude.ai.</div>
+<header><h1>FB Technical Inspection</h1><input id="who" placeholder="Your name (inspector)" size="16"></header>
+<main id="app"></main>
+<script>
+"use strict";
+const ST=[["pre","Pre-inspection"],["mech","Mechanical inspection"],["tilt","Tilt test"],["wt","Vehicle weighing"],["noise","Noise test (CV)"],["brake","Brake test"],["ev","EV: accumulator, electrical, rain"],["dc","DC: autonomous system, EBS"],["post","Post-event inspection"]];
+// [id, stage, rule ref, text, unit (optional value field)]
+const IT=[
+["p1","pre","IN2.1.1, T13.3.2","All helmets presented; closed-face, certified and labeled"],
+["p2","pre","T13.3","Driver equipment complete: balaclava, suit, underwear, socks, boots, gloves"],
+["p3","pre","IN2.1.1, T13.4.1","Two unused, in-date dry-powder extinguishers, at least 0.9 kg each"],
+["p4","pre","IN2.1.1","Set of 4 dry tires on rims"],
+["p5","pre","IN2.1.1","Set of 4 wet tires on rims (same tire/rim combination all event)"],
+["m1","mech","IN5.1.1, T13.1","Pushbar (red, university name) and jacks presented; jacks lift driven wheels at least 100 mm (T13.2.1)"],
+["m2","mech","IN5.1.1","Tallest driver present; copies of SEF / IA data; laminate or steel specimens if applicable"],
+["m3","mech","T2.2.1","Static ground clearance at least 30 mm with driver","mm"],
+["m4","mech","T2.8.1","Wheelbase at least 1525 mm","mm"],
+["m5","mech","T2.8.2","Smaller track at least 75% of larger track"],
+["m6","mech","T2.4","Working suspension: wheel travel at least 50 mm, jounce at least 25 mm with driver; mounting points visible"],
+["m7","mech","T2.5.1","Single wheel nut has anti-loosening device (jam nut not accepted)"],
+["m8","mech","T2.7","Steering: no cables or belts, direct mechanical actuation, quick disconnect works gloved"],
+["m9","mech","T2.3.1, T8.3.1","No bodywork openings into driver compartment; edge radii at least 3 mm forward, 1 mm other"],
+["m10","mech","T3.2.1, T3.8, T3.14.1","Primary structure tubing per Table 4; main hoop one uncut tube, under 10° incline; at least 3 side impact tubes per side"],
+["m11","mech","T3.15.1","Bolted primary structure attachments proven for 30 kN"],
+["m12","mech","T3.16, IN5.1.1","Impact attenuator and AIP per baseline or tested alternative; data and test assembly shown"],
+["m13","mech","T4.1.1, T4.2.1","Cockpit opening and internal cross section templates pass"],
+["m14","mech","T4.3.1, T4.12.1","Percy and all drivers: helmet clearance at least 50 mm; fits 5th percentile female to 95th male"],
+["m15","mech","T4.9.1, T4.10.1","Controls reachable inside side impact planes; at least 100° vision each side"],
+["m16","mech","T4.6, T4.7","Seat low point and heat insulation (surfaces 60°C or below); floor closeout complete, gaps 3 mm or less"],
+["m17","mech","T4.8","Firewall covers all lines from fuel, flammables, LV battery, TS parts to the driver"],
+["m18","mech","T4.11.1","Egress to the side in under 5 s, fully seated, hands on wheel, full gear (each driver)","s"],
+["m19","mech","T5.2, T5.3, T4.5","6/7-point harness in date; mounts on primary structure; 8.8 bolts and backing plates as required"],
+["m20","mech","T5.7, T5.8, T5.9","Head restraint 40 mm padding (890 N); roll bar padding 12 mm; moving parts shielded ahead of pedals"],
+["m21","mech","T6.1.1, T6.1.2, T6.1.10","Hydraulic brakes on all 4 wheels, one control; two independent circuits; pedal withstands 2 kN"],
+["m22","mech","T6.2.1, T6.3.1","Brake over-travel switch works at all balance settings; brake light on only with brake actuation"],
+["m23","mech","T10.1.2, T10.2","Critical fasteners at least 4 mm grade 8.8 and marked; positive locking; 2 threads past lock nuts; tie-rod jam nuts"],
+["m24","mech","T7.3","Scatter shields (2 mm steel or 3 mm Al 6061-T6) on exposed drivetrain; lubrication low point protected"],
+["m25","mech","T8.2.1","Aerodynamic devices within height and position limits"],
+["m26","mech","T12.1","Vehicle number at least 150 mm, sans-serif, front and both sides, with C/E prefix; university name shown"],
+["t1","tilt","IN7.1","60° tilt, tallest driver strapped in, fluids at max: no leaks, all wheels stay on table"],
+["w1","wt","IN8.1","Weight in ready-to-race condition, fluids at max (post-event limit is ±5 kg, IN12.1.7)","kg"],
+["n1","noise","IN10.1, CV3.2.1","Sound level at test speed (all rpm up to max compliant)","dB"],
+["n2","noise","IN10.1.8, IN10.1.9","Master switch, cockpit shutdown button and inertia switch work; intake closed off stalls engine"],
+["b1","brake","IN11.1.1","Locks all four wheels, straight-line stop"],
+["b2","brake","IN11.1.2, IN11.1.4","[CV] stops without stalling; vehicle drives on under own power afterward"],
+["b3","brake","IN11.1.3","[EV] TS switched off by cockpit button, braking with mechanical brakes only"],
+["b4","brake","IN11.1.5, IN11.1.7","Brake light (and TSAL) visible; tire pressure at most 1.0 bar above cold and below maker limit"],
+["e1","ev","IN3","Accumulator inspection passed"],
+["e2","ev","IN4","Electrical inspection passed (insulation, IMD, BSPD)"],
+["e3","ev","IN9","Rain test passed, and ready-to-drive sound OK (IN11.1.6)"],
+["d1","dc","IN6","Autonomous system inspection passed (sensor data, RES, ASF)"],
+["d2","dc","IN11.2","EBS test passed (40 km/h in 20 m, stop within T15.4 distance)"],
+["x1","post","IN12.1.3","Vehicle still compliant with the rules during and after dynamic events"],
+["x2","post","IN12.1.7, IN8","Weight within ±5 kg of technical inspection weight (20 points per kg beyond)","kg"],
+["x3","post","IN12.1.9","[EV] Ready-to-drive reachable at least 15 min after any dynamic event"],
+["x4","post","IN12.1.11","Data logger removed directly after endurance, on leaving parc fermé"]];
+const S={teams:{},checks:{},view:"dash",cur:null,q:"",open:{mech:1},db:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let who="";try{who=localStorage.getItem("fbi_who")||""}catch(e){}
+$("who").value=who;$("who").onchange=e=>{who=e.target.value.trim();try{localStorage.setItem("fbi_who",who)}catch(x){}};
+const key=(t,i)=>t+"__"+i;
+function applies(team,it){const ty=team.type||"";const st=it[1];
+ if(it[0]==="x3")return ty.includes("EV");if(st==="noise")return ty.includes("CV");if(st==="ev")return ty.includes("EV");if(st==="dc")return ty.startsWith("DC");return true}
+function stats(num){const t=S.teams[num];let tot=0,ok=0,f=0;
+ IT.forEach(it=>{if(!applies(t,it))return;tot++;const c=S.checks[key(num,it[0])];if(c&&(c.s==="p"||c.s==="n"))ok++;if(c&&c.s==="f")f++});
+ return{tot,ok,f}}
+function setCheck(team,item,s,note){const k=key(team,item);const old=S.checks[k]||{};
+ const ns=s??old.s??"";const d={team,item,s:ns,note:note??old.note??"",by:who||"unnamed",t:Date.now(),rf:(old.rf||0)+(ns==="f"&&old.s!=="f"?1:0)};
+ S.checks[k]=d;render();
+ if(S.db)S.db.collection("checks").doc(k).set(d).catch(e=>alert("Save failed: "+(e&&e.message)))}
+function addTeam(d){S.teams[d.num]=d;render();
+ if(S.db)S.db.collection("teams").doc(d.num).set(d).catch(e=>alert("Save failed: "+(e&&e.message)))}
+function dash(){
+ const ids=Object.keys(S.teams).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+ const q=S.q.toLowerCase();
+ const list=ids.filter(n=>!q||(n+" "+S.teams[n].name+" "+S.teams[n].college).toLowerCase().includes(q));
+ let fails=[];Object.values(S.checks).forEach(c=>{if(c.s==="f"&&S.teams[c.team])fails.push(c)});
+ fails.sort((a,b)=>b.t-a.t);
+ const ref=i=>(IT.find(x=>x[0]===i)||[])[2]||"";const txt=i=>(IT.find(x=>x[0]===i)||[])[3]||i;
+ return `<div class="row" style="margin-bottom:12px"><input id="q" class="grow" placeholder="Search team number, name or college" value="${esc(S.q)}"><button onclick="exportCsv()">Export CSV</button><button class="pri" onclick="go('add')">+ Add team</button></div>`+
+ (fails.length?`<div class="card"><b>Open failures (${fails.length})</b>${fails.slice(0,30).map(c=>`<div class="item team" onclick="go('team','${esc(c.team)}')"><span class="chip f">#${esc(c.team)}</span> <span class="ref">${esc(ref(c.item))}</span><div>${esc(txt(c.item))}</div><div class="meta">${esc(c.note||"No reason given")} · ${esc(c.by)} · ${new Date(c.t).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</div></div>`).join("")}</div>`:"")+
+ (list.length?list.map(n=>{const t=S.teams[n],s=stats(n),pc=s.tot?Math.round(100*s.ok/s.tot):0;
+  return `<div class="card team" onclick="go('team','${esc(n)}')"><div class="row"><b>#${esc(n)}</b><span class="grow">${esc(t.name)}<div class="mu">${esc(t.college)}</div></span><span class="chip">${esc(t.type)}</span>${s.f?`<span class="chip f">${s.f} fail</span>`:""}${pc===100?`<span class="chip p">cleared</span>`:`<span class="chip">${pc}%</span>`}</div><div class="bar"><i style="width:${pc}%"></i></div></div>`}).join(""):`<p class="mu">No teams yet. Add the first team to begin.</p>`)}
+function addv(){return `<button onclick="go('dash')">← Back</button><div class="card" style="margin-top:10px"><b>Add team</b><div class="grid" style="margin-top:10px">
+<div><label>Car number</label><input id="a_num" placeholder="e.g. C12"></div>
+<div><label>Team name</label><input id="a_name"></div>
+<div><label>College</label><input id="a_col"></div>
+<div><label>Type</label><select id="a_type"><option>CV</option><option>EV</option><option>DC-CV</option><option>DC-EV</option></select></div>
+<div><label>Inspection responsible person</label><input id="a_irp"></div>
+<div><label>Tallest driver</label><input id="a_td"></div></div>
+<button class="pri" style="margin-top:12px" onclick="saveTeam()">Save team</button></div>`}
+function saveTeam(){const g=i=>$(i).value.trim();const num=g("a_num").replace(/[\s\/\\'"]/g,"");
+ if(!num||!g("a_name")){alert("Car number and team name are required.");return}
+ if(S.teams[num]&&!confirm("Team "+num+" exists. Overwrite details? Checks are kept."))return;
+ addTeam({num,name:g("a_name"),college:g("a_col"),type:g("a_type"),irp:g("a_irp"),td:g("a_td")});go("team",num)}
+function teamv(){const n=S.cur,t=S.teams[n];if(!t)return `<button onclick="go('dash')">← Back</button><p>Team not found.</p>`;
+ const s=stats(n);
+ return `<button onclick="go('dash')">← Back</button><div class="card" style="margin-top:10px"><div class="row"><b>#${esc(n)} ${esc(t.name)}</b><span class="chip">${esc(t.type)}</span></div><div class="mu">${esc(t.college)}</div><div class="mu">IRP: ${esc(t.irp||"not set")} · Tallest driver: ${esc(t.td||"not set")}</div><div class="bar"><i style="width:${s.tot?100*s.ok/s.tot:0}%"></i></div><div class="mu">${s.ok}/${s.tot} cleared${s.f?` · <span style="color:var(--no)">${s.f} failed</span>`:""}</div></div>`+
+ ST.map(([sid,sn])=>{const its=IT.filter(i=>i[1]===sid&&applies(t,i));if(!its.length)return "";
+  const ok=its.filter(i=>{const c=S.checks[key(n,i[0])];return c&&(c.s==="p"||c.s==="n")}).length;
+  const fl=its.filter(i=>(S.checks[key(n,i[0])]||{}).s==="f").length;
+  return `<details ${S.open[sid]?"open":""} ontoggle="S.open['${sid}']=this.open?1:0"><summary>${sn}<span class="chip ${fl?"f":ok===its.length?"p":""}" style="margin-left:auto">${fl?fl+" fail":ok+"/"+its.length}</span></summary>`+
+  its.map(i=>{const c=S.checks[key(n,i[0])]||{},id=i[0];const val=i[4];
+   return `<div class="item"><span class="ref">${esc(i[2])}</span><div>${esc(i[3])}</div>
+   ${val?`<input class="note" type="text" inputmode="decimal" placeholder="Measured value (${val})" value="${c.s==="f"?"":esc(c.note)}" onchange="setCheck('${n}','${id}',null,this.value)">`:""}
+   <div class="btns">${[["p","Pass"],["f","Fail"],["n","N/A"]].map(([k,l])=>`<button class="${c.s===k?"on ":""}${k}" onclick="setCheck('${n}','${id}','${k}',null)">${l}</button>`).join("")}</div>
+   ${c.s==="f"?`<input class="note req" placeholder="Reason for fail / what the team must fix" value="${esc(c.note)}" onchange="setCheck('${n}','${id}',null,this.value)">`:""}
+   ${c.by?`<div class="meta">${c.rf&&c.s!=="f"?"Re-inspected after "+c.rf+" fail(s) · ":c.rf>1?"Failed "+c.rf+"× · ":""}${esc(c.by)} · ${new Date(c.t).toLocaleString([], {hour:"2-digit",minute:"2-digit",day:"numeric",month:"short"})}</div>`:""}</div>`}).join("")+`</details>`}).join("")}
+async function exportCsv(){const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+ const rows=[["Car","Team","College","Type","Item","Rule","Check","Status","Value / note","Fails","Inspector","Time"]];
+ Object.keys(S.teams).forEach(n=>{const t=S.teams[n];IT.forEach(i=>{if(!applies(t,i))return;const c=S.checks[key(n,i[0])]||{};
+  rows.push([n,t.name,t.college,t.type,i[0],i[2],i[3],({p:"Pass",f:"Fail",n:"N/A"})[c.s]||"Pending",c.note,c.rf||0,c.by,c.t?new Date(c.t).toISOString():""])})});
+ const csv=rows.map(r=>r.map(q).join(",")).join("\n");
+ try{const d=await claude.use("downloads");if(!d)throw 0;await d.save({filename:"fb-inspection-results.csv",data:csv})}catch(e){if(e&&e.code=="declined")return;alert("Download is unavailable here.")}}
+function go(v,n){S.view=v;if(n)S.cur=n;render();scrollTo(0,0)}
+function render(){const a=document.activeElement;if(a&&a.id==="q"){}
+ $("app").innerHTML=S.view==="add"?addv():S.view==="team"?teamv():dash();
+ const q=$("q");if(q){q.oninput=e=>{S.q=e.target.value;const p=e.target.selectionStart;render();const n=$("q");n.focus();n.setSelectionRange(p,p)}}}
+render();
+(async()=>{try{S.db=window.claude?await claude.use("db"):null}catch(e){S.db=null}
+ if(!S.db){$("bn").hidden=false;return}
+ S.db.collection("teams").onSnapshot(s=>{S.teams={};s.docs.forEach(d=>S.teams[d.id]=d.data());render()},e=>{$("bn").hidden=false});
+ S.db.collection("checks").onSnapshot(s=>{S.checks={};s.docs.forEach(d=>S.checks[d.id]=d.data());render()},e=>{})})();
+</script></body></html>
