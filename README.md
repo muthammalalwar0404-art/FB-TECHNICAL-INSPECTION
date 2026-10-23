@@ -28,3 +28,4 @@ Roadmap
 Shared backend (Firebase or Supabase) so all inspectors see live updates
 Full EV and DC checklists
 Read-only status view for teams 
+It is a student unofficial project
